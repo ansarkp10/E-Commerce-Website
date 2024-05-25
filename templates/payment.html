@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKCART Payment-Page</title>
+    <style>
+                        {% load static %}
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+		* { 
+	margin: 0; 
+	padding: 0; 
+	box-sizing: border-box; 
+	border: none; 
+	outline: none; 
+	font-family: 'Poppins', sans-serif; 
+	text-transform: capitalize; 
+	transition: all 0.2s linear; 
+} 
+
+.container { 
+	display: flex; 
+	justify-content: center; 
+	align-items: center; 
+	min-height: 100vh; 
+	padding: 25px; 
+	background: #d6eef1; 
+} 
+
+.container form { 
+	width: 700px; 
+	padding: 20px; 
+	background: #fff; 
+	box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2); 
+} 
+
+.container form .row { 
+	display: flex; 
+	flex-wrap: wrap; 
+	gap: 15px; 
+} 
+
+.container form .row .col { 
+	flex: 1 1 250px; 
+} 
+
+.col .title { 
+	font-size: 20px; 
+	color: rgb(237, 55, 23); 
+	padding-bottom: 5px; 
+} 
+
+.col .inputBox { 
+	margin: 15px 0; 
+} 
+
+.col .inputBox label { 
+	margin-bottom: 10px; 
+	display: block; 
+} 
+
+.col .inputBox input, 
+.col .inputBox select { 
+	width: 100%; 
+	border: 1px solid #ccc; 
+	padding: 10px 15px; 
+	font-size: 15px; 
+} 
+
+.col .inputBox input:focus, 
+.col .inputBox select:focus { 
+	border: 1px solid #000; 
+} 
+
+.col .flex { 
+	display: flex; 
+	gap: 15px; 
+} 
+
+.col .flex .inputBox { 
+	flex: 1 1; 
+	margin-top: 5px; 
+} 
+
+.col .inputBox img { 
+	height: 34px; 
+	margin-top: 5px; 
+	filter: drop-shadow(0 0 1px #000); 
+} 
+
+.container form .submit_btn { 
+	width: 100%; 
+	padding: 12px; 
+	font-size: 17px; 
+	background: rgb(1, 143, 34); 
+	color: #fff; 
+	margin-top: 5px; 
+	cursor: pointer; 
+	letter-spacing: 1px; 
+} 
+
+.container form .submit_btn:hover { 
+	background: #3d17fb; 
+} 
+
+input::-webkit-inner-spin-button, 
+input::-webkit-outer-spin-button { 
+	display: none; 
+}
+
+
+/* Navbar container */
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+header {
+    background: #3498a5;
+    color: white;
+    padding:.5rem 0;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.navbar.logo {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.navbar nav {
+    display: flex;
+    flex-grow: 1;
+}
+
+.navbar ul {
+    margin: 0 auto;
+}
+
+.navbar ul,.navbar nav {
+    display: flex;
+    gap: 1.6rem;
+    font-size: 1.2rem;
+}
+
+.hamburger-menu {
+    display: none; /* Hidden by default for larger screens */
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+   .navbar.logo {
+        font-size: 1.2rem;
+        z-index: 2;
+    }
+
+   .navbar nav {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+   .navbar ul {
+        flex-direction: column;
+        gap:.6rem;
+    }
+
+   .hamburger-menu {
+        display: block;
+        z-index: 2;
+    }
+
+   .navbar nav {
+        position: absolute;
+        top: 0;
+        right: -100%;
+        bottom: 0;
+        width: 100%;
+        padding-top: 6rem;
+        align-items: center;
+        text-align: center;
+        background-color: #d6eef1;
+        color: white;
+        transition: 0.15s ease-in-out;
+    }
+
+   .navbar nav.active {
+        right: 0;
+    }
+}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html"><img src="{% static 'images/logo.png' %}" alt="logo" style="height: 50px; width: 150px;"></a>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'list_product' %}">Products</a></li>
+                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'account' %}">Account</a></li>
+                    {% else %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% if user.is_authenticated %}
+            <abbr title="User Cart"><a href="{% url 'cart' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a></abbr>
+            {% endif %}
+            <span class="hamburger-menu material-symbols-outlined">menu</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="paymentForm" action="{% url 'bill_receipt' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="subtotal" value="{{ subtotal }}">
+            <input type="hidden" name="tax" value="{{ tax }}">
+            <input type="hidden" name="total" value="{{ total }}">
+
+            <div class="row">
+                <div class="col">
+                    <h3 class="title">Billing Address</h3>
+                    <div class="inputBox">
+                        <label for="name">Full Name:</label>
+                        <input type="hidden" id="hiddenName" name="hidden_name" value="{{ hidden_name }}">
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    </div>                    
+                    
+                    <div class="inputBox">
+                        <label for="email">Email:</label>
+                        <input type="text" id="email" name="email" placeholder="Enter email address" required>
+                    </div>
+                    <div class="inputBox">
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" placeholder="Enter address" required>
+                    </div>
+                    <div class="inputBox">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" placeholder="Enter city" required>
+                    </div>
+                </div>
+                <div class="col">
+                    <h3 class="title">Payment</h3>
+                    <div class="inputBox">
+                        <label for="cardName">Name On Card:</label>
+                        <input type="text" id="cardName" name="card_name" placeholder="Enter card name" required>
+                    </div>
+                    <div class="inputBox">
+                        <label for="cardNum">Credit Card Number:</label>
+                        <input type="text" id="cardNum" name="card_number" placeholder="1111-2222-3333-4444" maxlength="19" required>
+                    </div>
+                    <div class="inputBox">
+                        <label for="">Exp Month:</label>
+                        <select name="expiry_month" id="expiry_month">
+                            <option value="">Choose month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="flex">
+                        <div class="inputBox">
+                            <label for="">Exp Year:</label>
+                            <select name="expiry_year" id="expiry_year">
+                                <option value="">Choose Year</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                        <div class="inputBox">
+                            <label for="cvv">CVV</label>
+                            <input type="number" id="cvv" name="cvv" placeholder="123" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="submit_btn" type="button" onclick="submitForm()">Pay {{ total }}</button>
+        </form>
+    </div>
+    <script>
+        function submitForm() {
+            setTimeout(function() {
+                alert("Payment successful!");
+                document.getElementById('paymentForm').submit();
+            }, 5000); // 5000 milliseconds = 5 seconds
+        }
+    </script>
+</body>
+</html>

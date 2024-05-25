@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products</title>
+    <link rel="stylesheet" href="{% static 'css/searchstyle.css' %}">
+</head>
+<body>
+
+<div class="small-container">
+    <div class="row row-2">
+        <h2>All Products</h2>
+    </div>
+
+    <div class="page-btn">
+        {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}"><span><<</span></a>
+        {% endif %}
+        {% for i in products.paginator.page_range %}
+        <a href="?page={{i}}"><span>{{i}}</span></a>
+        {% endfor %}
+        {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}"><span>>></span></a>
+        {% endif %}
+    </div>
+    
+    <!-- Search Form -->
+    <form action="{% url 'search_products' %}" method="GET" class="search-form">
+        <input type="text" name="q" placeholder="Search products" class="search-input">
+        <button type="submit" class="search-button">Search</button>
+    </form>
+    
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-3">
+            <a href="{% url 'detail_product' product.id %}">
+                <img src="{{ product.image.url }}" alt="{{ product.title }}">
+            </a>
+            <h4>{{ product.title }}</h4>
+            <div class="rating">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star-o"></i>
+            </div>
+            <p>{{ product.price }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+
+</div>
+
+</body>
+</html>

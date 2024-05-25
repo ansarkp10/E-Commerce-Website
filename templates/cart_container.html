@@ -1,0 +1,109 @@
+{% load multiply %}
+{% load static %}
+{% block cartpage %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Page</title>
+    <style>
+        .pay-button-container {
+            position: absolute;
+            bottom: 10%;
+            right: 100px;
+        }
+
+        .pay-button {
+            margin-left: 130px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 25px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pay-button:hover {
+            background-color: #249b09;
+        }
+
+        @media (max-width: 768px) {
+            .pay-button-container {
+                bottom: 150px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<div class="small-container cart-page" style="position: relative;">
+    {% if cart %}
+    <form action="{% url 'payment' %}" method="post">
+        {% csrf_token %}
+        <table>
+            <tbody>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+                {% for cart_item in cart.added_item.all %}
+                <tr>
+                    <td>
+                        <div class="cart-info">
+                            <img src="{{ cart_item.product.image.url }}">
+                            <div>
+                                <p>{{ cart_item.product.title }}</p>
+                                <small>Price: {{ cart_item.product.price }}</small>
+                                <br>
+                                <a href="{% url 'remove_item' cart_item.id %}">Remove</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td><input type="number" disabled value="{{ cart_item.quantity }}" style="border: none; outline: none;"></td>
+                    <td>{% multiply cart_item.product.price cart_item.quantity %}</td>
+                    <input type="hidden" name="product_title_{{ forloop.counter }}" value="{{ cart_item.product.title }}">
+                    <input type="hidden" name="product_price_{{ forloop.counter }}" value="{{ cart_item.product.price }}">
+                    <input type="hidden" name="product_quantity_{{ forloop.counter }}" value="{{ cart_item.quantity }}">
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-price">
+            <table>
+                <tr>
+                    <td>Subtotal</td>
+                    <td>
+                        <input type="hidden" name="subtotal" value="{{ subtotal }}">
+                        {{ subtotal }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tax</td>
+                    <td>
+                        <input type="hidden" name="tax" value="{{ tax }}">
+                        {{ tax }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>
+                        <input type="hidden" name="total" value="{{ total }}">
+                        {{ total }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="pay-button" type="submit">Pay {{ total }}</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+
+{% endblock cartpage %}

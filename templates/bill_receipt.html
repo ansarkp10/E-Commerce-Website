@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Receipt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            margin: 0;
+            padding: 10px 0;
+            color: #2c3e50;
+        }
+
+        h2 {
+            margin-top: 20px;
+            text-align: center;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+
+        /* Header adjustments for centering company name */
+        header {
+            display: flex;
+            justify-content: space-between; /* Distributes space evenly between items */
+            align-items: center; /* Vertically centers items */
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+        }
+
+        header h1 {
+            flex-grow: 1; /* Allows the company name to take up remaining space */
+            text-align: center; /* Centers the text */
+            font-size: 24px;
+        }
+
+        header img {
+            height: 50px;
+            margin-right: 20px; /* Adds some space between the logo and the company name */
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ecf0f1;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #ecf0f1;
+        }
+
+        /* Payment Summary - Minimalist & Sophisticated */
+        .payment-summary {
+            margin-top: 40px;
+            background-color: #ffffff; /* Pure white background */
+            padding: 20px;
+            border-radius: 5px; /* Soft rounded corners */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Gentle shadow for depth */
+            overflow-x: auto; /* Allows horizontal scrolling if needed */
+        }
+
+        .payment-summary h2 {
+            text-align: left;
+            margin-bottom: 20px; /* Spacing below the heading */
+            color: #333; /* Dark grey for contrast */
+            font-size: 22px; /* Medium-sized heading */
+            font-weight: bold; /* Bold for emphasis */
+        }
+
+        .payment-summary table {
+            width: 100%; /* Full width for optimal use of space */
+            border-collapse: collapse; /* Neat borders */
+            border-spacing: 0; /* No gaps between borders */
+        }
+
+        .payment-summary th, .payment-summary td {
+            padding: 12px; /* Comfortable padding */
+            text-align: left; /* Aligned to the left */
+            border: 1px solid #ccc; /* Light grey border */
+        }
+
+        .payment-summary th {
+            background-color: #f9f9f9; /* Very light grey for headers */
+            color: #333; /* Dark grey text */
+            font-weight: normal; /* Normal weight for headers */
+        }
+
+        .payment-summary td {
+            text-align: right; /* Right-aligned for monetary values */
+        }
+
+        .payment-summary.total {
+            font-weight: bold; /* Bold for emphasis */
+            font-size: 1.2em; /* Slightly larger for the total */
+            color: #007BFF; /* Bright blue for the total to stand out */
+        }
+
+        /* Download button styles */
+        .download-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .download-button button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-button button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{% static 'images/logo.png' %}" alt="AKCART Logo">
+        <h1>AKCART E-Commerce Company</h1>
+    </header>
+    <h2>Order Details</h2>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.title }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="payment-summary">
+        <h2>Payment Summary</h2>
+        <table>
+            <tr>
+                <th>Subtotal</th>
+                <td>{{ sub }}</td>
+            </tr>
+            <tr>
+                <th>Tax</th>
+                <td>{{ tax }}</td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td class="total"><b>{{ total }}</b></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Download button -->
+    <div class="download-button">
+        <button onclick="downloadPDF()">Download as PDF <i class="fas fa-download"></i></button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('invoice');
+            html2canvas(element).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                pdf.addImage(imgData, 'PNG', 0, 0);
+                pdf.save('bill_receipt.pdf');
+            });
+        }
+    </script>
+</body>
+</html>

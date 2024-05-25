@@ -1,0 +1,153 @@
+{% extends 'blank_layout.html' %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/searchstyle.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Customize icon colors */
+        .fab.fa-whatsapp,
+        .fab.fa-instagram,
+        .fab.fa-facebook,
+        .fab.fa-telegram {
+            font-size: 24px; /* Adjust the size of the icons */
+        }
+
+        /* Customize icon colors */
+        .fab.fa-whatsapp {
+            color: green; /* Change color for WhatsApp icon */
+        }
+
+        .fab.fa-instagram {
+            color: #e4405f; /* Change color for Instagram icon */
+        }
+
+        .fab.fa-facebook {
+            color: #1877f2; /* Change color for Facebook icon */
+        }
+
+        .fab.fa-telegram {
+            color: #0088cc; /* Change color for Telegram icon */
+        }
+    </style>
+    
+    
+</head>
+<body>
+    <div class="container">
+        <h2>Search Results for "{{ query }}"</h2>
+    
+        {% if products %}
+            <div class="row">
+                {% for product in products %}
+                    <div style="margin-bottom: 20px;">
+                        <form action="{% url 'add_to_cart' %}" method="POST">
+                            {% csrf_token %}
+                            <div style="display: grid;
+                            grid-template-columns: 1fr 1fr; /* Divide into two columns */
+                            gap: 20px;">
+                                <div class="product-image-container" style="grid-column: 1; width: 100%; height: 200%;">
+                                    <img src="{{ product.image.url }}" alt="{{ product.title }}" style="width: 50%;
+                                    height: auto;">
+                                </div>
+                                <div class="product-details" style="grid-column: 2;">
+                                    <h3>{{ product.title }}</h3>
+                                    <p>{{ product.description }}</p>
+                                    <h5>Price: {{ product.price }}</h5>
+                            
+                                    <!-- Add to Cart Form -->
+                                    <form id="add-to-cart-form" action="{% url 'order_to_cart' %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{ product.id }}" name="product_id">
+                                        <input type="number" name="quantity" value="1">
+                                        <button type="submit" class="btn">Add To Cart</button>   
+                                    </form>
+                                    <!-- Share buttons -->
+                                    <div class="share-buttons" style="display: flex; align-items: center; font-size: 24px;">
+                                        <h6 style="margin-right: 10px;">Share The Product:</h6>
+                                    
+                                        <!-- WhatsApp -->
+                                        <a href="whatsapp://send?text={{ product.title }} - {{ product.description }} - Price: {{ product.price }}" data-action="share/whatsapp/share" style="margin-right: 10px;"><i class="fab fa-whatsapp"></i></a>
+                                    
+                                        <!-- Instagram -->
+                                        <a href="https://www.instagram.com/?hl=en" target="_blank" style="margin-right: 10px;"><i class="fab fa-instagram"></i></a>
+                                    
+                                        <!-- Facebook -->
+                                        <a href="https://www.facebook.com/" target="_blank" style="margin-right: 10px;"><i class="fab fa-facebook"></i></a>
+                                    
+                                        <!-- Telegram -->
+                                        <a href="https://telegram.me/share/url?url={{ request.build_absolute_uri }}&text={{ product.title }} - {{ product.description }} - Price: {{ product.price }}"><i class="fab fa-telegram"></i></a>
+                                    </div>
+                                    
+                                    <script>
+                                        // Function to handle form submission
+                                        function handleFormSubmit(event) {
+                                            event.preventDefault(); // Prevent default form submission
+                                
+                                            // Check if the user is authenticated
+                                            if ({{ user.is_authenticated|yesno:"true,false" }}) {
+                                                // If authenticated, submit the form
+                                                document.getElementById('add-to-cart-form').submit();
+                                            } else {
+                                                // If not authenticated, redirect to the login page
+                                                var loginUrl = "{% url 'account_login' %}?next=/cart/order_to_cart/";
+                                                window.location.href = loginUrl;
+                                            }
+                                        }
+                                
+                                        // Add event listener to the form submit button
+                                        document.querySelector('#add-to-cart-form button[type="submit"]').addEventListener('click', handleFormSubmit);
+                                    </script>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No products found.</p>
+        {% endif %}
+    </div>
+    <style>
+        /* Mobile View */
+        .product-item {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    
+        .product-image-container img {
+            width: 100%;
+            height: auto;
+        }
+    
+        /* Desktop View */
+        @media screen and (min-width: 768px) {
+            .product-item {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Divide into two columns */
+                gap: 20px;
+            }
+    
+            .product-image-container {
+                grid-column: 1;
+                width: 100%;
+                height: 200%;
+            }
+    
+            .product-details {
+                grid-column: 2;
+            }
+        }
+    </style>
+
+{% endblock %}
+</body>
+</html>
